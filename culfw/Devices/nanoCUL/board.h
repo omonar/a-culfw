@@ -78,16 +78,16 @@ extern const uint8_t mark433_pin;
 //#define USART_RX_vect           USART0_RX_vect
 //#define USART_UDRE_vect         USART0_UDRE_vect
 
-#define TTY_BUFSIZE             128
+#define TTY_BUFSIZE             224
 
 
 #define RCV_BUCKETS            2      //                 RAM: 25b * bucket
 #define FULL_CC1100_PA                // PROGMEM:  108b
 #define HAS_RAWSEND                   //
-#define HAS_FASTRF                    // PROGMEM:  468b  RAM:  1b
-#define HAS_ASKSIN
+//#define HAS_FASTRF                    // PROGMEM:  468b  RAM:  1b
+//#define HAS_ASKSIN
 /* Intertechno Senden einschalten */
-#define HAS_INTERTECHNO
+//#define HAS_INTERTECHNO
 
 
 
@@ -98,10 +98,11 @@ extern const uint8_t mark433_pin;
    should consider disabling other unneeded features
    to avoid stack overflows
 */
-//#define HAS_MBUS
+#define HAS_MBUS
+#define MBUS_NO_TX
 
-#  define HAS_TX3
-#  define HAS_UNIROLL
+//#  define HAS_TX3
+//#  define HAS_UNIROLL
 
 //#  define HAS_SOMFY_RTS
 #  define HAS_RFNATIVE
@@ -119,14 +120,14 @@ extern const uint8_t mark433_pin;
 #endif
 
 #if defined (nanoCUL868)
-#  define HAS_ASKSIN_FUP
-#  define HAS_MORITZ
-#  define HAS_RWE
-#  define HAS_ESA
+//#  define HAS_ASKSIN_FUP
+//#  define HAS_MORITZ
+//#  define HAS_RWE
+//#  define HAS_ESA
 //#  define HAS_HOERMANN
 //#  define HAS_HOERMANN_SEND
-#  define HAS_HMS
-#  define OFF_LACROSSE_HMS_EMU          // if you like HMS emulation for LaCrosse temp devices
+//#  define HAS_HMS
+//#  define OFF_LACROSSE_HMS_EMU          // if you like HMS emulation for LaCrosse temp devices
 
 //#define HAS_SOMFY_RTS
 //#define HAS_FHT_80b                     // PROGMEM: 1374b, RAM: 90b
