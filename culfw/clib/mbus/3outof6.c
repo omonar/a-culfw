@@ -8,6 +8,7 @@
 
 #include "mbus_defs.h"                  // for uint8
 
+#include <avr/pgmspace.h>               // for pgm_read_byte, PROGMEM
 
 //----------------------------------------------------------------------------
 // Variables
@@ -15,7 +16,7 @@
 
 // Table for encoding for a 4-bit data into 6-bit 
 // "3 out of 6" coded data.
-static uint8 encodeTab[16] = {0x16,  // 0x0 "3 out of 6" encoded 
+const uint8 PROGMEM encodeTab[16] = {0x16,  // 0x0 "3 out of 6" encoded 
                               0x0D,  // 0x1 "3 out of 6" encoded 
                               0x0E,  // 0x2 "3 out of 6" encoded 
                               0x0B,  // 0x3 "3 out of 6" encoded 
@@ -34,7 +35,7 @@ static uint8 encodeTab[16] = {0x16,  // 0x0 "3 out of 6" encoded
 
 // Table for decoding a 6-bit "3 out of 6" encoded data into 4-bit 
 // data. The value 0xFF indicates invalid "3 out of 6" coding
-static uint8 decodeTab[64] = {0xFF, //  "3 out of 6" encoded 0x00 decoded
+const uint8 PROGMEM decodeTab[64] = {0xFF, //  "3 out of 6" encoded 0x00 decoded
                               0xFF, //  "3 out of 6" encoded 0x01 decoded
                               0xFF, //  "3 out of 6" encoded 0x02 decoded
                               0xFF, //  "3 out of 6" encoded 0x03 decoded
@@ -134,12 +135,12 @@ void encode3outof6 (uint8 *uncodedData, uint8 *encodedData, uint8 lastByte)
   }
   else
   {
-    data[0] = encodeTab[*(uncodedData + 1) & 0x0F];
-    data[1] = encodeTab[(*(uncodedData + 1) >> 4) & 0x0F];  
+    data[0] = pgm_read_byte(&encodeTab[*(uncodedData + 1) & 0x0F]);
+    data[1] = pgm_read_byte(&encodeTab[(*(uncodedData + 1) >> 4) & 0x0F]);  
   }
     
-  data[2] = encodeTab[(*uncodedData) & 0x0F];
-  data[3] = encodeTab[((*uncodedData) >> 4) & 0x0F];
+  data[2] = pgm_read_byte(&encodeTab[(*uncodedData) & 0x0F]);
+  data[3] = pgm_read_byte(&encodeTab[((*uncodedData) >> 4) & 0x0F]);
 
   // - Shift the encoded 6-bit values into a byte buffer -
   *(encodedData + 0) = (data[3] << 2) | (data[2] >> 4);
@@ -180,8 +181,8 @@ uint8 decode3outof6(uint8 *encodedData, uint8 *decodedData, uint8 lastByte)
   // - Perform decoding on the input data -
   if (!lastByte)
   {
-    data[0] = decodeTab[(*(encodedData + 2) & 0x3F)]; 
-    data[1] = decodeTab[((*(encodedData + 2) & 0xC0) >> 6) | ((*(encodedData + 1) & 0x0F) << 2)];
+    data[0] = pgm_read_byte(&decodeTab[(*(encodedData + 2) & 0x3F)]); 
+    data[1] = pgm_read_byte(&decodeTab[((*(encodedData + 2) & 0xC0) >> 6) | ((*(encodedData + 1) & 0x0F) << 2)]);
   }
   // If last byte, ignore postamble sequence
   else
@@ -190,8 +191,8 @@ uint8 decode3outof6(uint8 *encodedData, uint8 *decodedData, uint8 lastByte)
     data[1] = 0x00;
   }
   
-  data[2] = decodeTab[((*(encodedData + 1) & 0xF0) >> 4) | ((*encodedData & 0x03) << 4)];
-  data[3] = decodeTab[((*encodedData & 0xFC) >> 2)];
+  data[2] = pgm_read_byte(&decodeTab[((*(encodedData + 1) & 0xF0) >> 4) | ((*encodedData & 0x03) << 4)]);
+  data[3] = pgm_read_byte(&decodeTab[((*encodedData & 0xFC) >> 2)]);
 
 
   // - Check for invalid data coding -

@@ -8,12 +8,14 @@
 
 #include "mbus_defs.h"                  // for uint8
 
+#include <avr/pgmspace.h>               // for pgm_read_byte, PROGMEM
+
 //----------------------------------------------------------------------------
 // Variables
 //----------------------------------------------------------------------------
 
 // Table for encoding 4-bit data into a 8-bit Manchester encoding.
-static uint8 manchEncodeTab[16] = {0xAA,  // 0x0 Manchester encoded 
+const uint8 PROGMEM manchEncodeTab[16] = {0xAA,  // 0x0 Manchester encoded 
                                    0xA9,  // 0x1 Manchester encoded 
                                    0xA6,  // 0x2 Manchester encoded 
                                    0xA5,  // 0x3 Manchester encoded 
@@ -32,7 +34,7 @@ static uint8 manchEncodeTab[16] = {0xAA,  // 0x0 Manchester encoded
 
 // Table for decoding 4-bit Manchester encoded data into 2-bit 
 // data. 0xFF indicates invalid Manchester encoding
-static uint8 manchDecodeTab[16] = {0xFF, //  Manchester encoded 0x0 decoded
+const uint8 PROGMEM manchDecodeTab[16] = {0xFF, //  Manchester encoded 0x0 decoded
                                    0xFF, //  Manchester encoded 0x1 decoded
                                    0xFF, //  Manchester encoded 0x2 decoded
                                    0xFF, //  Manchester encoded 0x3 decoded
@@ -76,8 +78,8 @@ void manchEncode(uint8 *uncodedData, uint8 *encodedData)
 
 
   // - Perform Manchester encoding - 
-  *encodedData       = (manchEncodeTab[data1]);
-  *(encodedData + 1) = manchEncodeTab[data0];
+  *encodedData       = pgm_read_byte(&manchEncodeTab[data1]);
+  *(encodedData + 1) = pgm_read_byte(&manchEncodeTab[data0]);
   
 }
 
@@ -109,15 +111,15 @@ uint8 manchDecode(uint8 *encodedData, uint8 *decodedData)
   data0 = ((*(encodedData + 1))      & 0x0F);
 
   // Check for invalid Manchester encoding
-  if ( (manchDecodeTab[data3] == 0xFF ) | (manchDecodeTab[data2] == 0xFF ) |
-     (manchDecodeTab[data1] == 0xFF ) | (manchDecodeTab[data0] == 0xFF ) )
+  if ( (pgm_read_byte(&manchDecodeTab[data3]) == 0xFF ) | (pgm_read_byte(&manchDecodeTab[data2]) == 0xFF ) |
+     (pgm_read_byte(&manchDecodeTab[data1]) == 0xFF ) | (pgm_read_byte(&manchDecodeTab[data0]) == 0xFF ) )
   {
     return(MAN_DECODING_ERROR);
   }
 
   // Shift result into a byte
-  *decodedData = (manchDecodeTab[data3] << 6) | (manchDecodeTab[data2] << 4) |
-                 (manchDecodeTab[data1] << 2) |  manchDecodeTab[data0];
+  *decodedData = (pgm_read_byte(&manchDecodeTab[data3]) << 6) | (pgm_read_byte(&manchDecodeTab[data2]) << 4) |
+                 (pgm_read_byte(&manchDecodeTab[data1]) << 2) | (pgm_read_byte(&manchDecodeTab[data0])     );
 
   return(MAN_DECODING_OK);
 } 

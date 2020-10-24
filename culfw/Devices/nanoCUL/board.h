@@ -78,7 +78,7 @@ extern const uint8_t mark433_pin;
 //#define USART_RX_vect           USART0_RX_vect
 //#define USART_UDRE_vect         USART0_UDRE_vect
 
-#define TTY_BUFSIZE             224
+#define TTY_BUFSIZE             255
 
 
 #define RCV_BUCKETS            2      //                 RAM: 25b * bucket
